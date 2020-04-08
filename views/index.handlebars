@@ -1,0 +1,22 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="font">Shorten Your URL</h1>
+      <div class="bg"></div>
+    </div>
+  </div>
+  <div class="url row mt-5">
+    <div class="col-5">
+      <form action="/urls" method="POST">
+        <input type="text" placeholder="請輸入你的網址" name="originUrl" class=" form-control">
+
+    </div>
+    <div class="col-1"><button type="submit" class="btn btn-success">Create</button></div>
+
+    </form>
+  </div>
+</div>
+
+<div class="mt-5">
+  {{#if shortenUrl}}<h1 class="font">成功產生了縮網址:<br><br>{{{shortenUrl}}}</h1>{{/if}}
+</div>

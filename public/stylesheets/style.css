@@ -1,0 +1,20 @@
+.box {
+  margin: auto;
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.font{
+ text-align: center;
+}
+
+.url {
+ justify-content: center;
+}
+
+.bg {
+  height: 250px;
+  background: url("https://i1.wp.com/www.soft4fun.net/wp-content/uploads/2014/07/shortlink.png?fit=256%2C256&quality=100&strip=all&ssl=1");
+  background-repeat: no-repeat;
+   background-position: center center;
+}
