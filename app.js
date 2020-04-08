@@ -3,6 +3,7 @@ const app = express()
 const port = 3000
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const generateShortUrl = require('./data/generateShortUrl.js')
 
 
 
@@ -42,6 +43,8 @@ app.post('/urls', (req, res) => {
   Url.find({ originUrl: req.body.originUrl })
     .lean()
     .exec((err, url) => {
+      if (err) return console.error(err)
+
       if (!url) {
         generateShortUrl
           .then(shortUrl => {
@@ -60,29 +63,6 @@ app.post('/urls', (req, res) => {
         return res.render('index', { shortenUrl: url.shortenUrl })
       }
     })
-
-  Url.findOne({ where: { originUrl: req.body.originUrl } })
-    .then((url) => {
-      if (!url) {
-        generateShortUrl
-          .then(shortUrl => {
-            console.log(shortUrl)
-            let url = shortUrl
-            Url.create({
-              originUrl: req.body.originUrl,
-              shortenUrl: url
-            })
-
-            return res.render('index', { shortenUrl: url })
-          })
-          .catch(error => console.log('錯誤訊息', error))
-      }
-      else {
-        return res.render('index', { shortenUrl: url.shortenUrl })
-      }
-
-    })
-
 })
 
 // 利用縮網址轉址
@@ -92,12 +72,13 @@ app.get('/redirect/:url', (req, res) => {
   short_url += req.params.url
   console.log(short_url)
   if (req.params.url !== '/favicon.ico') {
-    Url.findOne({ where: { shortenUrl: short_url } })
-      .then((url) => {
-        console.log(url)
+    Url.find({ shortenUrl: short_url })
+      .lean()
+      .exec((err, url) => {
+        if (err) return console.error(err)
+
         return res.redirect(`${url.originUrl}`)
       })
-      .catch(error => console.log('錯誤訊息', error))
   }
 })
 
