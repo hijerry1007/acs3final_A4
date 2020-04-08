@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<div class="container mt-5 box">
   <div class="row">
     <div class="col-12">
       <h1 class="font">Shorten Your URL</h1>
@@ -17,6 +17,29 @@
   </div>
 </div>
 
-<div class="mt-5">
-  {{#if shortenUrl}}<h1 class="font">成功產生了縮網址:<br><br>{{{shortenUrl}}}</h1>{{/if}}
+<div class="container mt-5">
+
+  {{#if shortenUrl}}
+  <div class="row url">
+    <h3 class="font">以下為縮網址:</h3>
+  </div>
+  <div class="row url mt-3">
+    <div class="col-5">
+      <input type="text" class="form-control" name="myvalue" id="myvalue" value="{{{shortenUrl}}}" readonly />
+    </div>
+    <div class="col-1">
+      <button class="btn btn btn-success" onclick="copyToClipboard('#myvalue')">Copy</button>
+    </div>
+  </div>
+  {{/if}}
 </div>
+
+<script type="text/javascript">
+  function copyToClipboard(element) {
+    let copyText = document.getElementById("myvalue");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    alert("Copied the text: " + copyText.value);
+  }
+</script>
