@@ -39,6 +39,28 @@ app.get('/', (req, res) => {
 app.post('/urls', (req, res) => {
   // 要求網址格式
   console.log(req.body.originUrl)
+  Url.find({ originUrl: req.body.originUrl })
+    .lean()
+    .exec((err, url) => {
+      if (!url) {
+        generateShortUrl
+          .then(shortUrl => {
+            console.log(shortUrl)
+            let url = shortUrl
+            Url.create({
+              originUrl: req.body.originUrl,
+              shortenUrl: url
+            })
+
+            return res.render('index', { shortenUrl: url })
+          })
+          .catch(error => console.log('錯誤訊息', error))
+      }
+      else {
+        return res.render('index', { shortenUrl: url.shortenUrl })
+      }
+    })
+
   Url.findOne({ where: { originUrl: req.body.originUrl } })
     .then((url) => {
       if (!url) {
