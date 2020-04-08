@@ -5,8 +5,6 @@ const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 const generateShortUrl = require('./data/generateShortUrl.js')
 
-
-
 // 設定資料庫
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/Url', { useNewUrlParser: true, useUnifiedTopology: true })   // 設定連線到 mongoDB
@@ -39,35 +37,39 @@ app.get('/', (req, res) => {
 // 新增一個縮網址
 app.post('/urls', (req, res) => {
   // 要求網址格式
-  console.log(req.body.originUrl)
   Url.find({ originUrl: req.body.originUrl })
     .lean()
     .exec((err, url) => {
       if (err) return console.error(err)
 
-      if (!url) {
+      if (Object.keys(url).length === 0) {
         generateShortUrl
-          .then(shortUrl => {
+          .then((shortUrl) => {
             console.log(shortUrl)
-            let url = shortUrl
-            Url.create({
+            const url = new Url({
               originUrl: req.body.originUrl,
-              shortenUrl: url
+              shortenUrl: shortUrl
             })
 
-            return res.render('index', { shortenUrl: url })
+            url.save(err => {
+              if (err) return console.error(err)
+              return res.render('index', { shortenUrl: shortUrl })
+            })
           })
           .catch(error => console.log('錯誤訊息', error))
       }
       else {
-        return res.render('index', { shortenUrl: url.shortenUrl })
+
+        let s_Url = url[0].shortenUrl
+        return res.render('index', { shortenUrl: s_Url })
       }
+
     })
 })
 
 // 利用縮網址轉址
 app.get('/redirect/:url', (req, res) => {
-  console.log(req.params.url)
+  console.log(req.params)
   let short_url = 'localhost:3000/redirect/'
   short_url += req.params.url
   console.log(short_url)
@@ -76,8 +78,8 @@ app.get('/redirect/:url', (req, res) => {
       .lean()
       .exec((err, url) => {
         if (err) return console.error(err)
-
-        return res.redirect(`${url.originUrl}`)
+        let o_Url = url[0].originUrl
+        return res.redirect(`${o_Url}`)
       })
   }
 })

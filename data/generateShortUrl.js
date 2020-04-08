@@ -1,7 +1,5 @@
-// 設定資料庫
-const db = require('../models')
-const Url = db.OriginalUrl
-const { Op } = require("sequelize");
+//載入 url model
+const Url = require('../models/url')
 
 let generateShortUrl = new Promise((resolve, reject) => {
   let shortUrl = 'localhost:3000/redirect/'
@@ -19,21 +17,18 @@ let generateShortUrl = new Promise((resolve, reject) => {
     }
   }
   shortUrl += combination
-  console.log(shortUrl)
-  Url.findAll({ where: { shortenUrl: shortUrl } })
-    .then((url) => {
-      if (url) {
-        //如果重複再跑一次
-        generateShortUrl
-          .then(shortUrl => {
-            return resolve(shortUrl)
-          })
+  Url.find({ shortenUrl: shortUrl })
+    .lean()
+    .exec((url) => {
+      if (!url) {
+        return resolve(shortUrl)
       }
-
-      return resolve(shortUrl)
-
+      //如果重複再跑一次
+      generateShortUrl
+        .then(shortUrl => {
+          return resolve(shortUrl)
+        })
     })
-
 })
 
 
