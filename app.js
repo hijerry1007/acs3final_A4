@@ -30,9 +30,55 @@ app.set('view engine', 'handlebars')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('public'))
 
+// 首頁
 app.get('/', (req, res) => {
-  res.send('hi')
+  res.render('index')
 })
+
+// 新增一個縮網址
+app.post('/urls', (req, res) => {
+  // 要求網址格式
+  console.log(req.body.originUrl)
+  Url.findOne({ where: { originUrl: req.body.originUrl } })
+    .then((url) => {
+      if (!url) {
+        generateShortUrl
+          .then(shortUrl => {
+            console.log(shortUrl)
+            let url = shortUrl
+            Url.create({
+              originUrl: req.body.originUrl,
+              shortenUrl: url
+            })
+
+            return res.render('index', { shortenUrl: url })
+          })
+          .catch(error => console.log('錯誤訊息', error))
+      }
+      else {
+        return res.render('index', { shortenUrl: url.shortenUrl })
+      }
+
+    })
+
+})
+
+// 利用縮網址轉址
+app.get('/redirect/:url', (req, res) => {
+  console.log(req.params.url)
+  let short_url = 'localhost:3000/redirect/'
+  short_url += req.params.url
+  console.log(short_url)
+  if (req.params.url !== '/favicon.ico') {
+    Url.findOne({ where: { shortenUrl: short_url } })
+      .then((url) => {
+        console.log(url)
+        return res.redirect(`${url.originUrl}`)
+      })
+      .catch(error => console.log('錯誤訊息', error))
+  }
+})
+
 
 app.listen(port, () => {
   console.log(`app is running on port:${port}`)
