@@ -9,7 +9,7 @@ const flash = require('connect-flash')
 
 // 設定資料庫
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/Url', { useNewUrlParser: true, useUnifiedTopology: true })   // 設定連線到 mongoDB
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/Url', { useNewUrlParser: true, useUnifiedTopology: true })   // 設定連線到 mongoDB
 
 const db = mongoose.connection
 
@@ -100,6 +100,6 @@ app.get('/redirect/:url', (req, res) => {
 })
 
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log(`app is running on port:${port}`)
 })
