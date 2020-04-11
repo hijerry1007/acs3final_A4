@@ -71,6 +71,7 @@ app.post('/urls', (req, res) => {
 
       })
   } else {
+    // 沒有輸入要提示使用者輸入
     let errors = [];
     errors.push({ message: '網址形式有誤!請重新輸入!' })
     if (errors.length > 0) {

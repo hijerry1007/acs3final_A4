@@ -23,7 +23,7 @@ let generateShortUrl = new Promise((resolve, reject) => {
       if (!url) {
         return resolve(shortUrl)
       }
-      //如果重複再跑一次
+      //如果重複再跑一次 防止重複的網址出現
       generateShortUrl
         .then(shortUrl => {
           return resolve(shortUrl)
