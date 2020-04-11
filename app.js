@@ -83,11 +83,11 @@ app.post('/urls', (req, res) => {
 })
 
 // 利用縮網址轉址
-app.get('/redirect/:url', (req, res) => {
+app.get('/:url', (req, res) => {
   // console.log(req.params)
-  let short_url = 'localhost:3000/redirect/'
+  let short_url = 'https://floating-forest-57791.herokuapp.com/'
   short_url += req.params.url
-  // console.log(short_url)
+  console.log(short_url)
   if (req.params.url !== '/favicon.ico') {
     Url.find({ shortenUrl: short_url })
       .lean()
