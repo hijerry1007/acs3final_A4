@@ -1,0 +1,8 @@
+{{#if errors}}
+{{#each errors}}
+<div class="col-5 alert alert-dismissible alert-danger">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+  <span>{{{this.message}}}</span>
+</div>
+{{/each}}
+{{/if}}
