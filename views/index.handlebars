@@ -17,12 +17,11 @@
     </form>
   </div>
 </div>
-
+{{#if shortenUrl}}
 <div class="container mt-5">
   <div class="row url">
     <h3 class="font">你的縮網址:</h3>
   </div>
-  {{#if shortenUrl}}
   <div class="row url mt-3">
     <div class="col-5">
       <input type="text" class="form-control" name="myvalue" id="myvalue" value="{{{shortenUrl}}}" readonly />
@@ -31,8 +30,8 @@
       <button class="btn btn btn-success" onclick="copyToClipboard('#myvalue')">Copy</button>
     </div>
   </div>
-  {{/if}}
 </div>
+{{/if}}
 
 <script type="text/javascript">
   function copyToClipboard(element) {

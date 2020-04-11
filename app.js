@@ -92,6 +92,7 @@ app.get('/redirect/:url', (req, res) => {
     Url.find({ shortenUrl: short_url })
       .lean()
       .exec((err, url) => {
+        // console.log(url)
         if (err) return console.error(err)
         let o_Url = url[0].originUrl
         return res.redirect(`${o_Url}`)
