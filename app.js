@@ -100,10 +100,25 @@ app.get('/:url', (req, res) => {
       Url.find({ shortenUrl: short_url })
         .lean()
         .exec((err, url) => {
-          console.log(url)
           if (err) return console.error(err)
-          let o_Url = url[0].originUrl
-          return res.redirect(`${o_Url}`)
+
+          if (Object.keys(url).length === 0) {
+            console.log(1)
+            let errors = [];
+            errors.push({
+              message: 'Your page is not found'
+            })
+            if (errors.length > 0) {
+              res.render('index', {
+                errors
+              })
+            }
+          }
+          else {
+            let o_Url = url[0].originUrl
+            return res.redirect(`${o_Url}`)
+          }
+
         })
     }
   }
