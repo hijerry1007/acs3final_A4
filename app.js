@@ -37,6 +37,10 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
+app.get('/favicon.ico', (req, res) => {
+  return res.redirect('/')
+})
+
 // 新增一個縮網址
 app.post('/', (req, res) => {
   // 要求網址格式
@@ -106,9 +110,7 @@ app.get('/:url', (req, res) => {
 
 })
 
-app.get('/favicon.ico', (res, res) => {
-  res.redirect('/')
-})
+
 
 
 app.listen(process.env.PORT || port, () => {
