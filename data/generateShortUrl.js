@@ -2,8 +2,7 @@
 const Url = require('../models/url')
 
 let generateShortUrl = new Promise((resolve, reject) => {
-  let shortUrl = 'https://floating-forest-57791.herokuapp.com/'
-
+  let shortUrl = ''
   // 產生亂數
   let combination = ''
   let i = 0

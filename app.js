@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 })
 
 // 新增一個縮網址
-app.post('/urls', (req, res) => {
+app.post('/', (req, res) => {
   // 要求網址格式
   let regexp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
   if (regexp.test(req.body.originUrl)) {
@@ -86,19 +86,24 @@ app.post('/urls', (req, res) => {
 // 利用縮網址轉址
 app.get('/:url', (req, res) => {
   // console.log(req.params)
-  let short_url = 'https://floating-forest-57791.herokuapp.com/'
-  short_url += req.params.url
-  console.log(short_url)
-  if (req.params.url !== '/favicon.ico') {
-    Url.find({ shortenUrl: short_url })
-      .lean()
-      .exec((err, url) => {
-        // console.log(url)
-        if (err) return console.error(err)
-        let o_Url = url[0].originUrl
-        return res.redirect(`${o_Url}`)
-      })
+  if (req.params.url === '') {
+    res.redirect('/')
   }
+  else {
+    let short_url = req.params.url
+    console.log(short_url)
+    if (req.params.url !== '/favicon.ico') {
+      Url.find({ shortenUrl: short_url })
+        .lean()
+        .exec((err, url) => {
+          // console.log(url)
+          if (err) return console.error(err)
+          let o_Url = url[0].originUrl
+          return res.redirect(`${o_Url}`)
+        })
+    }
+  }
+
 })
 
 
