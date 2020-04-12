@@ -86,7 +86,7 @@ app.post('/', (req, res) => {
 // 利用縮網址轉址
 app.get('/:url', (req, res) => {
   console.log(req.params.url)
-  if (req.params.url === '' || req.params.url === '/favicon.ico') {
+  if (req.params.url === '') {
     res.redirect('/')
   }
   else {
@@ -104,6 +104,10 @@ app.get('/:url', (req, res) => {
     }
   }
 
+})
+
+app.get('/favicon.ico', (res, res) => {
+  res.redirect('/')
 })
 
 
