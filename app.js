@@ -85,7 +85,7 @@ app.post('/', (req, res) => {
 
 // 利用縮網址轉址
 app.get('/:url', (req, res) => {
-  // console.log(req.params)
+  console.log(req.params.url)
   if (req.params.url === '') {
     res.redirect('/')
   }
@@ -96,7 +96,7 @@ app.get('/:url', (req, res) => {
       Url.find({ shortenUrl: short_url })
         .lean()
         .exec((err, url) => {
-          // console.log(url)
+          console.log(url)
           if (err) return console.error(err)
           let o_Url = url[0].originUrl
           return res.redirect(`${o_Url}`)
