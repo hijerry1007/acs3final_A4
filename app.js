@@ -3,7 +3,6 @@ const app = express()
 const port = 3000
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
-const generateShortUrl = require('./data/generateShortUrl.js')
 const flash = require('connect-flash')
 
 
@@ -38,12 +37,13 @@ app.get('/', (req, res) => {
 })
 
 app.get('/favicon.ico', (req, res) => {
-  return res.redirect('/')
+  res.redirect('/')
 })
 
 // 新增一個縮網址
 app.post('/', (req, res) => {
   // 要求網址格式
+
   let regexp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
   if (regexp.test(req.body.originUrl)) {
     Url.find({ originUrl: req.body.originUrl })
@@ -52,23 +52,66 @@ app.post('/', (req, res) => {
         if (err) return console.error(err)
 
         if (Object.keys(url).length === 0) {
+          let error = false
+
+          let generateShortUrl = new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (error) {
+                return reject('error happened')
+              }
+
+              let shortUrl = ''
+              let combination = ''
+              let i = 0
+              // 產生亂數
+              while (i < 5) {
+                let randomNum = Math.floor(Math.random() * 123) // 0-123
+
+                if ((randomNum >= 48 && randomNum <= 57) || (randomNum >= 65 && randomNum <= 90) || (randomNum >= 97 && randomNum <= 122)) {
+
+                  combination += String.fromCharCode(randomNum)
+                  i++
+                }
+              }
+              shortUrl += combination
+
+              Url.find({ shortenUrl: shortUrl })
+                .lean()
+                .exec((url) => {
+                  console.log(url)
+                  if (!url) {
+                    console.log(1)
+                    console.log(shortUrl)
+                    return resolve(shortUrl)
+                  }
+                  //如果重複再跑一次 防止重複的網址出現
+                  generateShortUrl
+                    .then(shortUrl => {
+                      console.log(2)
+                      console.log(shortUrl)
+                      return resolve(shortUrl)
+                    })
+                })
+            }, 100)
+
+          })
+
           generateShortUrl
             .then((shortUrl) => {
               console.log(shortUrl)
-              const url = new Url({
+              const newUrl = new Url({
                 originUrl: req.body.originUrl,
                 shortenUrl: shortUrl
-              })
+              });
 
-              url.save(err => {
+              newUrl.save(err => {
                 if (err) return console.error(err)
                 return res.render('index', { shortenUrl: shortUrl })
-              })
+              });
             })
             .catch(error => console.log('錯誤訊息', error))
         }
         else {
-
           let s_Url = url[0].shortenUrl
           return res.render('index', { shortenUrl: s_Url })
         }
@@ -95,7 +138,7 @@ app.get('/:url', (req, res) => {
   }
   else {
     let short_url = req.params.url
-    console.log(short_url)
+
     if (req.params.url !== '/favicon.ico') {
       Url.find({ shortenUrl: short_url })
         .lean()
@@ -103,7 +146,7 @@ app.get('/:url', (req, res) => {
           if (err) return console.error(err)
 
           if (Object.keys(url).length === 0) {
-            console.log(1)
+
             let errors = [];
             errors.push({
               message: 'Your page is not found'
